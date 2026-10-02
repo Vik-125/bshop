@@ -1,2 +1,2 @@
-# bshop
-An App for booking barbers.
+# Bshop
+Barber & Barbershop Booking Platform
