@@ -6,6 +6,7 @@ const barbershopSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      unique: true,
     },
 
     name: {
@@ -14,9 +15,9 @@ const barbershopSchema = new mongoose.Schema(
       trim: true,
     },
 
-    password: {
+    description: {
       type: String,
-      required: true,
+      trim: true,
     },
 
     phone: {
@@ -24,27 +25,21 @@ const barbershopSchema = new mongoose.Schema(
       trim: true,
     },
 
-    description: {
-      type: String,
-      trim: true,
-    },
-
-    adress: {
+    address: {
       type: String,
       required: true,
       trim: true,
     },
 
-    images: [
-      {
-        url: {
-          type: String,
-        },
-        publicId: {
-          type: String,
-        },
-      },
-    ],
+    images: {
+      url: String,
+      publicId: String,
+    },
+
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,
