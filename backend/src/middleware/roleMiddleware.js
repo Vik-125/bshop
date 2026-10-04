@@ -1,0 +1,1 @@
+// For checking the powers of user, i.e for authorization.
