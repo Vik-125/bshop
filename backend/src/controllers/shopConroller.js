@@ -18,7 +18,7 @@ export const createShop = async(req, res) =>{
         });
 
         if(existingShop){
-            return res.status(403).json({
+            return res.status(409).json({
                 message: "Shop already exists"
             })
         }
