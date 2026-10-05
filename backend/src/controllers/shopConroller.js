@@ -1,5 +1,6 @@
 import Barbershop from "../models/Barbershop.js";
 
+// For creating a barbershop
 export const createShop = async(req, res) =>{
     try {
         const{ name, description, address, phone } = req.body;
@@ -11,15 +12,16 @@ export const createShop = async(req, res) =>{
         }
 
         const existingShop = await Barbershop.findOne({
-            owner : req.user.userId
-        })
+            owner: req.user.userId,
+            name: name.trim(),
+            address: address.trim()
+        });
 
         if(existingShop){
-            return res.status(409).json({
-                message: "You already have a barbershop"
-            });
+            return res.status(403).json({
+                message: "Shop already exists"
+            })
         }
-
         const shop = await Barbershop.create({
             owner: req.user.userId,
             name,
@@ -39,3 +41,69 @@ export const createShop = async(req, res) =>{
         });
     }
 };
+
+
+// for retrieving a shop
+export const getShopId = async (req, res)=>{
+    try{
+        const shop = await Barbershop.findById(req.params.shopId)
+        .populate("owner", "name email phone");
+
+        if(!shop){
+            return res.status(404).json({
+                message : "Barber shop not found"
+            });
+        }
+
+        return res.status(200).json({
+            shop
+        })
+    } catch(error){
+        res.status(500).json({
+            message: "Server error",
+            error:  error.message
+        });
+    }
+}
+
+// For updating a shop info.
+export const updateShop = async(req, res)=>{
+    try{
+        const { name, description, address, phone }= req.body;
+
+        const shop = await Barbershop.findById(req.params.shopId);
+
+        if (!shop) {
+            return res.status(404).json({ message: "Barbershop not found" });
+        }
+        
+        if(name !== undefined){
+            shop.name = name;
+        }
+
+        if (description !== undefined) {
+            shop.description = description;
+        }
+
+        if (address !== undefined) {
+            shop.address = address;
+        }
+
+        if (phone !== undefined) {
+            shop.phone = phone;
+        } 
+
+        await shop.save();
+         
+        res.status(200).json({
+            message: "Barbershop updated successfully",
+            shop
+        });
+    } catch(error){
+        return res.status(500).json({
+            message: "Server error",
+            error : error.message
+        });
+    }
+}
+

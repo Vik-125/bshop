@@ -6,7 +6,6 @@ const barbershopSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
     },
 
     name: {
@@ -31,10 +30,12 @@ const barbershopSchema = new mongoose.Schema(
       trim: true,
     },
 
-    images: {
-      url: String,
-      publicId: String,
-    },
+    images: [   // storing all sort of picture of the shop, etc.
+      {
+        url: String,
+        publicId: String,
+      },
+    ],
 
     isActive: {
       type: Boolean,
@@ -46,6 +47,10 @@ const barbershopSchema = new mongoose.Schema(
   },
 );
 
+ barbershopSchema.index(
+    { owner: 1, name: 1, address: 1 },
+    { unique: true }
+);
 const Barbershop = mongoose.model("Barbershop", barbershopSchema);
 
 export default Barbershop;
