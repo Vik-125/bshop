@@ -1,6 +1,6 @@
 // For checking the powers of user, i.e for authorization.
 
-const roleMiddleware = (...allowedRoles) =>{
+const roleMiddleware = (...allowedRoles) =>{  // the 3 dots here gathers all the arguments & put then into an array, here it have [shopOwner]
     return (req, res, next) => {
         if(!req.user){
             return res.status(401).json({       // 401 - unauthorized
