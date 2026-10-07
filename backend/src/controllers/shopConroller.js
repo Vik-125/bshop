@@ -48,7 +48,6 @@ export const getShopId = async (req, res)=>{
     try{
         const shop = await Barbershop.findById(req.params.shopId)
         .populate("owner", "name email phone");
-
         if(!shop){
             return res.status(404).json({
                 message : "Barber shop not found"
