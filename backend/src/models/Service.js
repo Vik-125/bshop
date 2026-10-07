@@ -41,6 +41,11 @@ const serviceSchema = new mongoose.Schema(
     }
 );
 
+serviceSchema.index(
+    { shop: 1, name: 1 },
+    { unique: true }
+);
+
 const Service = mongoose.model("Service", serviceSchema);
 
 export default Service;
