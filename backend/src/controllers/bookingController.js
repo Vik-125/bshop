@@ -179,3 +179,53 @@ export const createBooking = async (req, res) => {
     });
   }
 };
+
+
+export const cancelBooking = async (req, res) => {
+  try{
+    const { bookingId } = req.params;
+
+    const booking = await Booking.findById(bookingId);
+
+    if(!bookingId){
+      return res.status(404).json({
+        message: "Booking not found"
+      });
+    }
+
+    // Only the customer who booked or the shopOwner can cancel.
+    if(req.user.role === "customer"){
+      if(booking.customer.toString() !== req.user.userId){
+        return res.status(403).json({
+          message : "You cannot cancel someone else's booking"
+        });
+      }
+    }
+    else if(req.user.role == "shopOwner"){
+      const shop = await Barbershop.findById(booking.shop);
+
+      if(!shop || shop.owner.toString() !== req.user.userId){
+        return res.status(403).json({
+          message: "You do not own this shop"
+        })
+      }
+    }
+
+    if(booking.status !== "confirmed"){
+      return res.status(400).json({
+        message : "Only confirmed bookings can be cancelled"
+      });
+    }
+
+
+    booking.status = "cancelled";
+    await booking.save();
+
+    return res.status(200).json({
+      message: "Booking cancelled successfully",
+      booking
+    })
+  } catch(error){
+
+  }
+}

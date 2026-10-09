@@ -13,6 +13,7 @@ import serviceOwnerMiddleware from "../middleware/serviceOwnerMiddleware.js";
 
 const router = express.Router();
 
+// For creating a service
 router.post(
   "/shops/:shopId/services",
   authMiddleware,
@@ -21,8 +22,10 @@ router.post(
   createService,
 );
 
+// For fetching all the services from a shop.
 router.get("/shops/:shopId/services", getShopServices);
 
+// For updating a service
 router.put(
   "/services/:serviceId",
   authMiddleware,
@@ -31,6 +34,7 @@ router.put(
   updateService,
 );
 
+// For deactivating a service.
 router.delete(
   "/services/:serviceId",
   authMiddleware,
@@ -39,6 +43,7 @@ router.delete(
   deactivateService,
 );
 
+// For activating a service
 router.patch(
   "/services/:serviceId/activate",
   authMiddleware,

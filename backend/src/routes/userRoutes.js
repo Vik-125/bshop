@@ -6,6 +6,7 @@ import roleMiddleware from "../middleware/roleMiddleware.js";
 const router = express.Router();
 
 router.get("/profile", authMiddleware, getMyProfile);
+
 router.get("/shop-owner-test",
     authMiddleware,
     roleMiddleware("shopOwner"),
@@ -15,4 +16,5 @@ router.get("/shop-owner-test",
         });
     }
 );
+
 export default router;

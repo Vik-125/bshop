@@ -21,7 +21,6 @@ router.get("/:shopId", getShopId);
 
 
 // For updating a shops info 
-
 router.put("/:shopId",
     authMiddleware,
     roleMiddleware("shopOwner"),

@@ -24,8 +24,10 @@ router.post(
 // route for getting all the barbers from a shop.
 router.get("/shops/:shopId/barbers", getShopBarbers);
 
+// Fetching a barber
 router.get("/barbers/:barberId", getBarberById);
 
+// Updating a barber
 router.put(
   "/barbers/:barberId",
   authMiddleware,
