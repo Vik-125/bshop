@@ -23,27 +23,28 @@ router.post(
 
 router.get("/shops/:shopId/services", getShopServices);
 
-router.put("/services/:serviceId",
+router.put(
+  "/services/:serviceId",
   authMiddleware,
   roleMiddleware("shopOwner"),
   serviceOwnerMiddleware,
-  updateService
-)
+  updateService,
+);
 
 router.delete(
   "/services/:serviceId",
   authMiddleware,
   roleMiddleware("shopOwner"),
   serviceOwnerMiddleware,
-  deactivateService
-)
+  deactivateService,
+);
 
 router.patch(
-    "/services/:serviceId/activate",
-    authMiddleware,
-    roleMiddleware("shopOwner"),
-    serviceOwnerMiddleware,
-    activateService
+  "/services/:serviceId/activate",
+  authMiddleware,
+  roleMiddleware("shopOwner"),
+  serviceOwnerMiddleware,
+  activateService,
 );
 
 export default router;

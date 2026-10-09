@@ -22,6 +22,23 @@ export const createBarber = async (req, res) => {
         message: "Barber already exists in this shop!!",
       });
     }
+    
+    if (
+      !workingHours ||
+      workingHours.start === undefined ||
+      workingHours.end === undefined ||
+      !Number.isFinite(workingHours.start) ||
+      !Number.isFinite(workingHours.end) ||
+      !Number.isInteger(workingHours.start) ||
+      !Number.isInteger(workingHours.end) ||
+      workingHours.start < 0 ||
+      workingHours.end > 1440 ||
+      workingHours.start >= workingHours.end
+    ) {
+      return res.status(400).json({
+        message: "Valid working hours are required",
+      });
+    }
 
     const barber = await Barber.create({
       shop: req.shop._id,
@@ -64,64 +81,57 @@ export const getShopBarbers = async (req, res) => {
   }
 };
 
-
 // For getting one barber
 
 export const getBarberById = async (req, res) => {
-    try {
-        const barber = await Barber.findById(req.params.barberId);
+  try {
+    const barber = await Barber.findById(req.params.barberId);
 
-        if (!barber) {
-            return res.status(404).json({
-                message: "Barber not found"
-            });
-        }
-
-        res.status(200).json({
-            barber
-        });
-    } catch (error) {
-        res.status(500).json({
-            message: "Server error",
-            error: error.message
-        });
-    }
-};
-
-
-export const updateBarber = async(req, res) => {
-    try{
-        const {
-            name, 
-            bio, 
-            experience,
-            specialization
-        } = req.body;
-
-        const barber = req.barber;
-
-        if(name !== undefined){
-          barber.name = name.trim();
-        }
-
-        if(bio !== undefined){
-          barber.bio = bio;
-        }
-
-        if(experience !== undefined){
-          barber.experience = experience;
-        }
-
-        await barber.save();
-
-        res.status(200).json({
-          message: "Barber updated successfully",
-          barber
-        })
-    } catch(error){
-      res.status(500).json({
-        message: "Server error",
-        error : error.message
+    if (!barber) {
+      return res.status(404).json({
+        message: "Barber not found",
       });
     }
-}
+
+    res.status(200).json({
+      barber,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+export const updateBarber = async (req, res) => {
+  try {
+    const { name, bio, experience, specialization } = req.body;
+
+    const barber = req.barber;
+
+    if (name !== undefined) {
+      barber.name = name.trim();
+    }
+
+    if (bio !== undefined) {
+      barber.bio = bio;
+    }
+
+    if (experience !== undefined) {
+      barber.experience = experience;
+    }
+
+    await barber.save();
+
+    res.status(200).json({
+      message: "Barber updated successfully",
+      barber,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};

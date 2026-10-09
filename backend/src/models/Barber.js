@@ -48,14 +48,18 @@ const barberSchema = new mongoose.Schema(
       default: true,
     },
 
-    workingHours: {
+    workingHours: {    // Minutes=(Hour×60)+Minute
       start: {
         type: Number,
         required: true,
+        min: 0,
+        max: 1439,
       },
       end: {
         type: Number,
         required: true,
+        min: 1,                 // For making the check that start < end
+        max: 1440,              // represents midnight.
       },
     },
   },
