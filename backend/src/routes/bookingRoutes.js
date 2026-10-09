@@ -2,7 +2,8 @@ import express from "express";
 import {
   createBooking,
   cancelBooking,
-  getMyBookings
+  getMyBookings,
+  completeBooking
 } from "../controllers/bookingController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import roleMiddleware from "../middleware/roleMiddleware.js";
@@ -31,6 +32,13 @@ router.get("/allBookings",
   authMiddleware,
   roleMiddleware("customer","shopOwner"),
   getMyBookings
+);
+
+// For marking a booking as completed
+router.patch("/bookings/:bookingId/complete",
+  authMiddleware,
+  roleMiddleware("shopOwner"),
+  completeBooking
 );
 
 export default router;

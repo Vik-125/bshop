@@ -266,3 +266,46 @@ export const getMyBookings = async (req, res) => {
     });
   }
 };
+
+export const completeBooking = async (req, res) =>{
+    try{
+        const { bookingId } = req.params;
+
+        const booking = await Booking.findById(bookingId);
+
+        if(!booking){
+            return res.status(404).json({
+                message : "Booking not found"
+            });
+        }
+
+        // Only the owner of the shop can complete a booking
+        const shop = await Barbershop.findById(booking.shop);
+
+        if(!shop || shop.owner.toString() !== req.user.userId){
+            return res.status(403).json({
+                message : "You do not own this shop"
+            });
+        }
+
+        // Only confirmed bookings can be completed
+        if(booking.status !== "confirmed"){
+            return res.status(400).json({
+                message: "Only confirmed bookings can be completed"
+            });
+        }
+
+        booking.status = "completed";
+        await booking.save();
+
+        return res.status(200).json({
+            message: "Booking marked as completed",
+            booking
+        })
+    } catch(error){
+        return res.status(500).json({
+            message: "Failed to complete booking",
+            error: error.message
+        });
+    }
+};
