@@ -2,6 +2,7 @@ import express from "express";
 import {
   createBooking,
   cancelBooking,
+  getMyBookings
 } from "../controllers/bookingController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import roleMiddleware from "../middleware/roleMiddleware.js";
@@ -23,6 +24,13 @@ router.patch(
     authMiddleware,
     roleMiddleware("customer", "shopOwner"),
     cancelBooking
+);
+
+// For retrieving the bookings
+router.get("/allBookings",
+  authMiddleware,
+  roleMiddleware("customer","shopOwner"),
+  getMyBookings
 );
 
 export default router;

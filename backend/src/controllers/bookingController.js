@@ -84,14 +84,12 @@ export const createBooking = async (req, res) => {
     }
 
     // Prepare service details for the booking
-    const bookingServices = selectedServices.map(
-      (service) => ({
-        service: service._id,
-        name: service.name,
-        price: service.price,
-        duration: service.duration,
-      }),
-    );
+    const bookingServices = selectedServices.map((service) => ({
+      service: service._id,
+      name: service.name,
+      price: service.price,
+      duration: service.duration,
+    }));
 
     const totalPrice = bookingServices.reduce(
       (total, service) => total + service.price,
@@ -141,36 +139,35 @@ export const createBooking = async (req, res) => {
 
     // check for overlapping bookings with this barber
     const overlappingBooking = await Booking.findOne({
-        barber: barberId,
-        status: {$in: ["confirmed"]},
-        startTime: { $lt : requestedEnd},
-        endTime :{$gt: requestedStart}
+      barber: barberId,
+      status: { $in: ["confirmed"] },
+      startTime: { $lt: requestedEnd },
+      endTime: { $gt: requestedStart },
     });
 
-    if(overlappingBooking){
-        return res.status(409).json({
-            message: "This barber is already booked during the selected time"
-        });
+    if (overlappingBooking) {
+      return res.status(409).json({
+        message: "This barber is already booked during the selected time",
+      });
     }
-
 
     // Save the booking
     const booking = await Booking.create({
-        customer: req.user.userId,
-        shop: shopId,
-        barber: barberId,
-        services: bookingServices,
-        appointmentDate: requestedDate,
-        startTime: requestedStart,
-        endTime: requestedEnd,
-        totalPrice,
-        totalDuration,
-        status: "confirmed"
+      customer: req.user.userId,
+      shop: shopId,
+      barber: barberId,
+      services: bookingServices,
+      appointmentDate: requestedDate,
+      startTime: requestedStart,
+      endTime: requestedEnd,
+      totalPrice,
+      totalDuration,
+      status: "confirmed",
     });
 
     return res.status(201).json({
-        message: "Appointment booked successfully",
-        booking
+      message: "Appointment booked successfully",
+      booking,
     });
   } catch (error) {
     res.status(500).json({
@@ -180,52 +177,92 @@ export const createBooking = async (req, res) => {
   }
 };
 
-
 export const cancelBooking = async (req, res) => {
-  try{
+  try {
     const { bookingId } = req.params;
 
     const booking = await Booking.findById(bookingId);
 
-    if(!bookingId){
+    if (!bookingId) {
       return res.status(404).json({
-        message: "Booking not found"
+        message: "Booking not found",
       });
     }
 
     // Only the customer who booked or the shopOwner can cancel.
-    if(req.user.role === "customer"){
-      if(booking.customer.toString() !== req.user.userId){
+    if (req.user.role === "customer") {
+      if (booking.customer.toString() !== req.user.userId) {
         return res.status(403).json({
-          message : "You cannot cancel someone else's booking"
+          message: "You cannot cancel someone else's booking",
+        });
+      }
+    } else if (req.user.role == "shopOwner") {
+      const shop = await Barbershop.findById(booking.shop);
+
+      if (!shop || shop.owner.toString() !== req.user.userId) {
+        return res.status(403).json({
+          message: "You do not own this shop",
         });
       }
     }
-    else if(req.user.role == "shopOwner"){
-      const shop = await Barbershop.findById(booking.shop);
 
-      if(!shop || shop.owner.toString() !== req.user.userId){
-        return res.status(403).json({
-          message: "You do not own this shop"
-        })
-      }
-    }
-
-    if(booking.status !== "confirmed"){
+    if (booking.status !== "confirmed") {
       return res.status(400).json({
-        message : "Only confirmed bookings can be cancelled"
+        message: "Only confirmed bookings can be cancelled",
       });
     }
-
 
     booking.status = "cancelled";
     await booking.save();
 
     return res.status(200).json({
       message: "Booking cancelled successfully",
-      booking
-    })
-  } catch(error){
-
+      booking,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
   }
-}
+};
+
+// For fetxhing all the bookings of a user.
+
+export const getMyBookings = async (req, res) => {
+  try {
+    let bookings;
+
+    // Customers can see only their bookings
+    if (req.user.role === "customer") {
+      bookings = await Booking.find({
+        customer: req.user.userId,
+      })
+        .populate("shop", "name address")
+        .populate("barber", "name")
+        .sort({ startTime: -1 });
+    }
+    // Shop owners can see all bookings for their each shops
+    else if (req.user.role === "shopOwner") {
+      const shops = await Barbershop.find({ owner: req.user.userId }).select(
+        "_id",
+      );
+
+      const shopIds = shop.map((shop) => shop._id);
+
+      bookings = await Booking.find({
+        shop: { $in: shopIds },
+      })
+        .populate("shop", "name address")
+        .populate("barber", "name")
+        .populate("customer", "name email")
+        .sort({ startTime: -1 });
+    }
+    return res.status(200).json({ count: bookings.length, bookings });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch Bookings",
+      error: error.message,
+    });
+  }
+};
