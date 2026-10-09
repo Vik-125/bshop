@@ -4,17 +4,25 @@ import userRoutes from "./routes/userRoutes.js";
 import shopRoutes from "./routes/shopRoutes.js";
 import barberRoutes from "./routes/barberRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
 
 const app = express();
 
 app.use(express.json());
+
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/shops", shopRoutes);
-app.use("/api", barberRoutes);
 
+// Shops
+app.use("/api/shops", shopRoutes);
+
+// Barber
+app.use("/api", barberRoutes);
 
 // Services
 app.use("/api/service", serviceRoutes);
+
+// Bookings
+app.use("/api", bookingRoutes);
 
 export default app;
