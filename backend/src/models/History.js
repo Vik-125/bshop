@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const HistorySchema = new mongoose.Schema(
@@ -22,15 +21,24 @@ const HistorySchema = new mongoose.Schema(
       maxlength: 500,
       default: "",
     },
+    photo: [
+      {
+        url: {
+          type: String,
+          default: "",
+        },
+        publicId: {
+          type: String,
+          default: "",
+        },
+      },
+    ],
   },
   {
     timestamps: true,
   },
 );
 
-const History = mongoose.model(
-  "History",
-  HistorySchema,
-);
+const History = mongoose.model("History", HistorySchema);
 
 export default History;
