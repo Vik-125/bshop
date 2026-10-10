@@ -6,6 +6,7 @@ import barberRoutes from "./routes/barberRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
+import availableRoutes from "./routes/availabilityRoutes.js"
 
 const app = express();
 
@@ -28,4 +29,8 @@ app.use("/api", bookingRoutes);
 
 // Reviews
 app.use("/api", reviewRoutes);
+
+// Slots
+app.use("/api", availableRoutes);
+
 export default app;
