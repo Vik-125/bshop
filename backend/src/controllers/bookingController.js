@@ -2,6 +2,7 @@ import Booking from "../models/Booking.js";
 import Barber from "../models/Barber.js";
 import Service from "../models/Service.js";
 import Barbershop from "../models/Barbershop.js";
+import HaircutHistory from "../models/History.js";
 
 export const createBooking = async (req, res) => {
   try {
@@ -302,6 +303,13 @@ export const completeBooking = async (req, res) => {
 
     booking.status = "completed";
     await booking.save();
+
+    // Creating history for the customer
+    await HaircutHistory.create({
+      customer: booking.customer,
+      booking: booking._id,
+      note: "",
+    });
 
     return res.status(200).json({
       message: "Booking marked as completed",

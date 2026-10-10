@@ -7,6 +7,7 @@ import serviceRoutes from "./routes/serviceRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
 import availableRoutes from "./routes/availabilityRoutes.js"
+import historyRoutes from "./routes/historyRoutes.js";
 
 const app = express();
 
@@ -32,5 +33,8 @@ app.use("/api", reviewRoutes);
 
 // Slots
 app.use("/api", availableRoutes);
+
+// History
+app.use("/api/history", historyRoutes)
 
 export default app;
