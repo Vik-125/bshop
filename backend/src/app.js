@@ -5,6 +5,7 @@ import shopRoutes from "./routes/shopRoutes.js";
 import barberRoutes from "./routes/barberRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
 
 const app = express();
 
@@ -25,4 +26,6 @@ app.use("/api/service", serviceRoutes);
 // Bookings
 app.use("/api", bookingRoutes);
 
+// Reviews
+app.use("/api", reviewRoutes);
 export default app;
