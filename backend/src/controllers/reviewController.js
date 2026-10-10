@@ -1,5 +1,6 @@
 import Review from "../models/review.js";
 import Booking from "../models/Booking.js";
+import Barber from "../models/Barber.js";
 
 export const createReview = async (req, res) => {
   try {
@@ -59,32 +60,117 @@ export const createReview = async (req, res) => {
         .json({ message: "This booking has already been reviewed" });
     }
 
-
     // Save the review
     const review = await Review.create({
-        customer: req.user.userId,
-        shop : booking.shop,
-        barber: booking.barber,
-        booking: booking._id,
-        rating, 
-        comment: comment?.trim() ?? ""
+      customer: req.user.userId,
+      shop: booking.shop,
+      barber: booking.barber,
+      booking: booking._id,
+      rating,
+      comment: comment?.trim() ?? "",
     });
 
     return res.status(201).json({
-        message : "Review submitted successfully",
-        review
-    })
+      message: "Review submitted successfully",
+      review,
+    });
   } catch (error) {
     // Handles duplicate-key errors, including simultaneous submissions.
-    if(error.code === 11000){
-        return res.status(409).json({
-            message: "This booking has already been recieved"
-        });
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: "This booking has already been recieved",
+      });
     }
 
     return res.status(500).json({
-        message: "Failed t submit review",
-        error: error.message
+      message: "Failed t submit review",
+      error: error.message,
+    });
+  }
+};
+
+export const getBarberReviews = async (req, res) => {
+  try {
+    const { barberId } = req.params;
+
+    if (!/^[a-fA-F0-9]{24}$/.test(barberId)) {
+      return res.status(400).json({
+        message: "Invalid barber ID format",
+      });
+    }
+
+    const barber = await Barber.findById(barberId);
+
+    if (!barber) {
+      return res.status(404).json({ message: "Barber not found" });
+    }
+
+    const reviews = await Review.find({ barber: barberId })
+      .populate("customer", "name")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      count: reviews.length,
+      reviews,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to fetch barber reviews",
+      error: error.message,
+    });
+  }
+};
+
+export const getBarberRating = async (req, res) => {
+  try {
+    const { barberId } = req.params;
+
+    // 1. Validate barber ID format.
+    if (!/^[a-fA-F0-9]{24}$/.test(barberId)) {
+      return res.status(400).json({ message: "Invalid barber ID format" });
+    }
+
+    const barber = await Barber.findById(barberId);
+
+    if (!barber) {
+      return res.status(404).json({
+        message: "Barber not found",
+      });
+    }
+
+    // calculate rating statistics in MongoDB.
+    const result = await Review.aggregate([
+      {
+        $match: {
+          barber: barber._id,
+        },
+      },
+      {
+        $group: {
+          _id: "$barber",
+          averageRating: { $avg: "$rating" },
+          totalReviews: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Barber with no reviews
+    const rating =
+      result.length > 0
+        ? {
+            averageRating: Number(result[0].averageRating.toFixed(1)),
+            totalReviews: result[0].totalReviews,
+          }
+        : {
+            averageRating: 0,
+            totalReviews: 0,
+          };
+
+    return res.status(200).json(rating);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to fetch barber rating",
+      error: error.message,
     });
   }
 };
