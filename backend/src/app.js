@@ -8,6 +8,7 @@ import bookingRoutes from "./routes/bookingRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
 import availableRoutes from "./routes/availabilityRoutes.js"
 import historyRoutes from "./routes/historyRoutes.js";
+import favoriteRoutes from "./routes/favoriteRoutes.js";
 
 const app = express();
 
@@ -37,4 +38,6 @@ app.use("/api", availableRoutes);
 // History
 app.use("/api/history", historyRoutes)
 
+// Favorites
+app.use("/api/favorites", favoriteRoutes);
 export default app;
