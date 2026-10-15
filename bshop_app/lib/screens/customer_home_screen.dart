@@ -18,50 +18,55 @@ class CustomerHomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Welcome back!',
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Welcome back!',
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 28),
+              const Text(
+                'Find your next favorite barbershop.',
+                style: TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 28),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: FilledButton.icon(
+                  onPressed: () {
+                    // connect shop browsing next.
+                  },
+                  icon: const Icon(Icons.search),
+                  label: const Text('Explore Barbershops'),
+                ),
+              ),
+              const SizedBox(height: 28,),
+              const Text(
+                'Your BShop',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                )
+              ),
+              const SizedBox(height: 12,),
+              const _CustomerFeatureTile(
+                icon: Icons.calendar_month_outlined,
+                title: 'My Bookings',
+                subtitle: 'View and manage your appointments.'
+              ),
+              const _CustomerFeatureTile(
+                icon: Icons.history,
+                title: 'My History',
+                subtitle: 'Revisit your completed appointment'
+              )
+            ],
           ),
-          const SizedBox(height: 28),
-          const Text(
-            'Find your next favorite barbershop.',
-            style: TextStyle(fontSize: 16),
-          ),
-          const SizedBox(height: 28),
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: FilledButton.icon(
-              onPressed: () {
-                // connect shop browsing next.
-              },
-              icon: const Icon(Icons.search),
-              label: const Text('Explore Barbershops'),
-            ),
-          ),
-          const SizedBox(height: 28,),
-          const Text(
-            'Your BShop',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            )
-          ),
-          const SizedBox(height: 12,),
-          const _CustomerFeatureTile(
-            icon: Icons.calendar_month_outlined,
-            title: 'My Bookings',
-            subtitle: 'View and manage your appointments.'
-          ),
-          const _CustomerFeatureTile(
-            icon: Icons.history,
-            title: 'My History',
-            subtitle: 'Revisit your completed appointment'
-          )
-        ],
+        ),
       ),
     );
   }
