@@ -110,7 +110,5 @@ const loginUser = async(req, res) => {
 }
 
 
-
-
 export { registerUser };
 export { loginUser };
