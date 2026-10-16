@@ -106,3 +106,20 @@ export const updateShop = async(req, res)=>{
     }
 }
 
+// for fetching all the barbers related to a paticular owner.
+export const getMyShops = async(req, res) => {
+    try{
+        const shops = await Barbershop.find({
+            owner : req.user.userId
+        });
+        return res.status(200).json({
+            count: shops.length,
+            shops
+        });
+    } catch(error){
+        return res.status(500).json({
+            message : "Failed to fetch your shops",
+            error: error.message
+        });
+    }
+}
