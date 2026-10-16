@@ -59,7 +59,7 @@ class ApiService{
     required String token,
   }) async{
     final response = await http.get( 
-      Uri.parse('$baseUrl/shops/myshops'),
+      Uri.parse('$baseUrl/shops/my-shops'),
       headers: {
       'Authorization': 'Bearer $token',
       'Content-Type': 'application/json',
