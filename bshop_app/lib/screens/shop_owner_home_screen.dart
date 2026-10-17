@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'barber_Screen.dart';
+import 'barber_screen.dart';
 import '../screens/my_shops_screen.dart';
 
 class ShopOwnerHomeScreen extends StatelessWidget {
@@ -82,7 +82,7 @@ class ShopOwnerHomeScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const BarbersScreen(),
+                      builder: (context) => const BarbersScreen(shopId: '6ac2a3a873c9f9cab343f1b7'),
                     ),
                   );
                 },

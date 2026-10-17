@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../services/token_storage.dart';
+import '../screens/barber_screen.dart';
 
 class MyShopsScreen extends StatefulWidget {
   const MyShopsScreen({super.key});
@@ -104,9 +105,20 @@ class _MyShopsScreenState extends State<MyShopsScreen> {
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
                         // open this shop's barbers next.
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Selected ${shop['name'] ?? 'shop'}'),
+                        final shopId = shop['_id']?.toString();
+
+                        if (shopId == null || shopId.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Shop Id is missing.'),
+                            ),
+                          );
+                          return;
+                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BarbersScreen(shopId: shopId),
                           ),
                         );
                       },
